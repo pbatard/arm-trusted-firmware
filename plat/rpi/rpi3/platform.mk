@@ -117,6 +117,9 @@ RPI3_DIRECT_LINUX_BOOT		:= 0
 # Any other value means the default UART will be used.
 RPI3_RUNTIME_UART		:= -1
 
+# Toggle the use of PL011 over 'mini UART' for serial
+RPI3_USE_PL011_UART		:= 0
+
 # Use normal memory mapping for ROM, FIP, SRAM and DRAM
 RPI3_USE_UEFI_MAP		:= 0
 
@@ -140,6 +143,7 @@ ifdef RPI3_PRELOADED_DTB_BASE
 $(eval $(call add_define,RPI3_PRELOADED_DTB_BASE))
 endif
 $(eval $(call add_define,RPI3_RUNTIME_UART))
+$(eval $(call add_define,RPI3_USE_PL011_UART))
 $(eval $(call add_define,RPI3_USE_UEFI_MAP))
 
 # Verify build config

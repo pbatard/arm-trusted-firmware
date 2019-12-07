@@ -126,8 +126,24 @@
 /*
  * Serial-related constants.
  */
-#define PLAT_RPI3_UART_BASE		RPI3_MINI_UART_BASE
 #define PLAT_RPI3_UART_BAUDRATE		ULL(115200)
+#if RPI3_USE_PL011_UART
+#define PLAT_RPI3_UART_BASE		RPI3_PL011_UART_BASE
+#define PLAT_RPI3_UART_CLOCK		RPI3_PL011_UART_CLK_IN_HZ
+#define PLAT_RPI3_CONSOLE_CORE_INIT	console_pl011_core_init
+#define PLAT_RPI3_CONSOLE_CORE_PUTC	console_pl011_core_putc
+#define PLAT_RPI3_CONSOLE_CORE_FLUSH	console_pl011_core_flush
+#define PLAT_RPI3_CONSOLE_REGISTER	console_pl011_register
+#define PLAT_RPI3_CONSOLE_T		console_pl011_t
+#else
+#define PLAT_RPI3_UART_BASE		RPI3_MINI_UART_BASE
+#define PLAT_RPI3_UART_CLOCK		PLAT_RPI4_VPU_CLK_RATE
+#define PLAT_RPI3_CONSOLE_CORE_INIT	console_16550_core_init
+#define PLAT_RPI3_CONSOLE_CORE_PUTC	console_16550_core_putc
+#define PLAT_RPI3_CONSOLE_CORE_FLUSH	console_16550_core_flush
+#define PLAT_RPI3_CONSOLE_REGISTER	console_16550_register
+#define PLAT_RPI3_CONSOLE_T		console_16550_t
+#endif /* RPI3_USE_PL011_UART */
 
 /*
  * System counter

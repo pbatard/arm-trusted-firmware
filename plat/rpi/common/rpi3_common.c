@@ -13,10 +13,11 @@
 #include <common/debug.h>
 #include <bl31/interrupt_mgmt.h>
 #include <drivers/console.h>
+#include <drivers/arm/pl011.h>
 #include <drivers/ti/uart/uart_16550.h>
 #include <lib/xlat_tables/xlat_tables_v2.h>
 
-#include <rpi_hw.h>
+#include <platform_def.h>
 #include <rpi_shared.h>
 
 #define MAP_DEVICE0	MAP_REGION_FLAT(DEVICE0_BASE,			\
@@ -102,7 +103,7 @@ static const mmap_region_t plat_rpi3_mmap[] = {
 /*******************************************************************************
  * Function that sets up the console
  ******************************************************************************/
-static console_16550_t rpi3_console;
+static PLAT_RPI3_CONSOLE_T rpi3_console;
 
 void rpi3_console_init(unsigned int base_clk_rate)
 {
@@ -110,7 +111,7 @@ void rpi3_console_init(unsigned int base_clk_rate)
 #if RPI3_RUNTIME_UART != -1
 	console_scope |= CONSOLE_FLAG_RUNTIME;
 #endif
-	int rc = console_16550_register(PLAT_RPI3_UART_BASE,
+	int rc = PLAT_RPI3_CONSOLE_REGISTER(PLAT_RPI3_UART_BASE,
 					base_clk_rate,
 					PLAT_RPI3_UART_BAUDRATE,
 					&rpi3_console);

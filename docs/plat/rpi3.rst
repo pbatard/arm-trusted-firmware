@@ -226,6 +226,10 @@ The following build options are supported:
   ``RPI3_DIRECT_LINUX_BOOT=1``. This option allows to specify the location of a
   DTB in memory.
 
+- ``RPI3_USE_PL011_UART``: Disabled by default. Switches the default UART from
+  the 'mini UART' to PL011. Note that to use PL011, you must also load either a
+  'miniuart-bt' or 'disable-bt' Device Tree overlays in ``config.txt``.
+
 - ``RPI3_RUNTIME_UART``: Indicates whether the UART should be used at runtime
   or disabled. ``-1`` (default) disables the runtime UART. Any other value
   enables the default UART (currently UART1) for runtime messages.

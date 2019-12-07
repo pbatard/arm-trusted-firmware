@@ -11,6 +11,7 @@ PLAT_INCLUDES		:=	-Iplat/rpi/common/include		\
 				-Iplat/rpi/rpi4/include
 
 PLAT_BL_COMMON_SOURCES	:=	drivers/ti/uart/aarch64/16550_console.S	\
+				drivers/arm/pl011/aarch64/pl011_console.S \
 				plat/rpi/common/rpi3_common.c		\
 				${XLAT_TABLES_LIB_SRCS}
 
@@ -79,6 +80,9 @@ RPI3_BL33_IN_AARCH32		:= 0
 # Any other value means the default UART will be used.
 RPI3_RUNTIME_UART		:= 0
 
+# Toggle the use of PL011 over 'mini UART' for serial
+RPI3_USE_PL011_UART		:= 0
+
 # Use normal memory mapping for ROM, FIP, SRAM and DRAM
 RPI3_USE_UEFI_MAP		:= 0
 
@@ -91,6 +95,7 @@ ifdef RPI3_PRELOADED_DTB_BASE
 $(eval $(call add_define,RPI3_PRELOADED_DTB_BASE))
 endif
 $(eval $(call add_define,RPI3_RUNTIME_UART))
+$(eval $(call add_define,RPI3_USE_PL011_UART))
 $(eval $(call add_define,RPI3_USE_UEFI_MAP))
 
 ifeq (${ARCH},aarch32)

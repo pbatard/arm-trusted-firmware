@@ -119,8 +119,10 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 				u_register_t arg2, u_register_t arg3)
 
 {
-	uint64_t base_clk_rate = PLAT_RPI4_VPU_CLK_RATE;
+	uint64_t base_clk_rate = PLAT_RPI3_UART_CLOCK;
+#if (RPI3_USE_PL011_UART == 0)
 	uint32_t div_reg;
+#endif /* RPI3_USE_PL011_UART */
 
 	/*
 	 * LOCAL_CONTROL:
@@ -135,11 +137,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	/* Early GPU firmware revisions need a little break here. */
 	ldelay(100000);
 
+#if (RPI3_USE_PL011_UART == 0)
 	/*
-	 * Initialize the console to provide early debug support.
-	 * Different GPU firmware revisions set up the VPU divider differently,
-	 * so read the actual divisor register to learn the UART base clock
-	 * rate.
+	 * When using the mini UART, different GPU firmware revisions set up
+	 * the VPU divider differently, so read the actual divisor register
+	 * to learn the UART base clock rate.
 	 */
 	div_reg = mmio_read_32(RPI4_CLOCK_BASE + RPI4_VPU_CLOCK_DIVIDER);
 
@@ -147,6 +149,11 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	div_reg &= 0xffffff;
 	if (div_reg != 0)
 		base_clk_rate = (base_clk_rate << 12) / div_reg;
+#endif /* RPI3_USE_PL011_UART */
+
+	/*
+	 * Initialize the console to provide early debug support.
+	 */
 	rpi3_console_init((unsigned int)base_clk_rate);
 
 	bl33_image_ep_info.pc = plat_get_ns_image_entrypoint();
