@@ -162,6 +162,29 @@ static void rpi3_pwr_domain_on_finish(const psci_power_state_t *target_state)
 #endif
 }
 
+static void __dead2 rpi3_pwr_down_wfi(
+		const psci_power_state_t *target_state)
+{
+	uint64_t *hold_base = (uint64_t *)PLAT_RPI3_TM_HOLD_BASE;
+	unsigned int pos = plat_my_core_pos();
+
+	if (pos == 0) {
+		/*
+		 * The secondaries will always be in a wait
+		 * for warm boot on reset, but the BSP needs
+		 * to be able to distinguish between waiting
+		 * for warm boot (e.g. after psci_off, waiting
+		 * for psci_on) and a cold boot.
+		 */
+		hold_base[pos] = PLAT_RPI3_TM_HOLD_STATE_BSP_OFF;
+		dsb();
+		isb();
+	}
+
+	write_rmr_el3(RMR_EL3_RR_BIT | RMR_EL3_AA64_BIT);
+	while(1);
+}
+
 /*******************************************************************************
  * Platform handlers for system reset and system off.
  ******************************************************************************/
@@ -226,6 +249,7 @@ static const plat_psci_ops_t plat_rpi3_psci_pm_ops = {
 	.pwr_domain_off = rpi3_pwr_domain_off,
 	.pwr_domain_on = rpi3_pwr_domain_on,
 	.pwr_domain_on_finish = rpi3_pwr_domain_on_finish,
+	.pwr_domain_pwr_down_wfi = rpi3_pwr_down_wfi,
 	.system_off = rpi3_system_off,
 	.system_reset = rpi3_system_reset,
 	.validate_power_state = rpi3_validate_power_state,
